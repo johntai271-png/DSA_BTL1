@@ -9,6 +9,11 @@ template<class T>
 class QuickSort : public ISort<T> {
 private:
     int (*pivotSelection)(T*, int);
+    void swap(T&a,T&b){
+        T temp=a;
+        a=b;
+        b=temp;
+    }
 
 public:
     QuickSort(int (*pivotSelection)(T*, int) = 0)
@@ -16,23 +21,41 @@ public:
 
     void sort(T array[], int size, int (*comparator)(T&, T&) = 0) override {
         // TODO Q4
-        (void)array; (void)size; (void)comparator;
-        throw logic_error("TODO Q4: QuickSort::sort");
+        if(size<=1) return;
+        if(comparator==0){
+            comparator=SortSimpleOrder<T>::compare4Ascending;
+        }
+        quickSort(array,0,size-1,comparator);
     }
 
 private:
     void quickSort(T array[], int left, int right,
                    int (*comparator)(T&, T&) = 0) {
         // TODO Q4
-        (void)array; (void)left; (void)right; (void)comparator;
-        throw logic_error("TODO Q4: QuickSort::quickSort");
+        if(left>=right) return;
+        int q=partition(array,left,right,comparator);
+        quickSort(array,0,q-1,comparator);
+        quickSort(array,q+1,right,comparator);
     }
 
     int partition(T array[], int left, int right,
                   int (*comparator)(T&, T&) = 0) {
         // TODO Q4
-        (void)array; (void)left; (void)right; (void)comparator;
-        throw logic_error("TODO Q4: QuickSort::partition");
+        int pivotIndex=right;
+        if(pivotSelection!=0){
+            pivotIndex=left+ pivotSelection(array+left,right-left+1);      
+        }
+      swap(array[pivotIndex],array[right]);
+      T pivot=array[right];
+      int j=left;
+      for(int i=left;i<right;i++){
+            if(comparator(array[i],pivot)<0){
+                swap(array[i],array[j]);
+                j++;
+            }
+        }
+        swap(array[right],array[j]);
+        return j;  
     }
 };
 
